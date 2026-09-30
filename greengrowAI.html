@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GreenGrow AI | Agricultural Research & Intelligence Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* ==========================================
+       GLOBAL STYLES & SAAS THEME VARIABLES
+       ========================================== */
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --primary-green: #0b4f1c;
+      --accent-green: #10b981;
+      --saffron-accent: #ea580c;
+      --light-green-bg: #ecfdf5;
+      --border-color: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --shadow-sm: 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-md: 0 6px 12px -2px rgba(0,0,0,0.1);
+      --shadow-lg: 0 16px 32px -6px rgba(0, 0, 0, 0.18);
+      --border-radius: 16px;
+      --font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: var(--font-family); }
+
+    /* AI Smart Farm Background */
+    body { 
+      background: 
+        linear-gradient(135deg, rgba(248, 250, 252, 0.88), rgba(236, 253, 245, 0.92)),
+        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&w=2000&q=80') center/cover fixed no-repeat;
+      color: var(--text-main); 
+      line-height: 1.6; 
+      min-height: 100vh;
+    }
+
+    /* Login Screen Overlay */
+    #loginOverlay {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: linear-gradient(135deg, rgba(11, 79, 28, 0.92), rgba(15, 23, 42, 0.95)), 
+                  url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(8px);
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    .login-card {
+      background: rgba(255, 255, 255, 0.98);
+      width: 100%;
+      max-width: 440px;
+      padding: 2.5rem;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .login-logo {
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+    }
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary-green);
+      margin-bottom: 0.25rem;
+    }
+
+    .login-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 1.25rem;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+    }
+
+    .password-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-wrapper input {
+      width: 100%;
+      padding: 0.75rem 2.8rem 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #ffffff;
+    }
+
+    .password-wrapper input:focus {
+      border-color: var(--accent-green);
+    }
+
+    .toggle-pw-btn {
+      position: absolute;
+      right: 0.75rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
+
+    .login-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-muted);
+    }
+
+    .login-options label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 0.85rem;
+      background-color: var(--primary-green);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .login-btn:hover {
+      background-color: #073513;
+      transform: translateY(-1px);
+    }
+
+    .login-error {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 0.8rem;
+      display: none;
+    }
+
+    .login-footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Header & Branding */
+    header {
+      background-color: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.8rem 2rem;
+      position: sticky; top: 0; z-index: 1000;
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-container {
+      max-width: 1300px; margin: 0 auto;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .brand-logo-img {
+      height: 42px;
+      object-fit: contain;
+    }
+
+    .header-controls { display: flex; gap: 1rem; align-items: center; }
+
+    .lang-select {
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: #fff; font-weight: 600;
+      cursor: pointer;
+    }
+
+    .system-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background-color: var(--light-green-bg); color: var(--primary-green);
+      padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dot {
+      height: 10px; width: 10px; background-color: var(--accent-green);
+      border-radius: 50%; display: inline-block; animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.25); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Side Navigation Container */
+    .side-nav-container {
+      position: fixed;
+      left: 0; top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: flex; flex-direction: column; gap: 0.75rem;
+      padding-left: 1rem;
+    }
+    @media (max-width: 768px) { .side-nav-container { display: none; } }
+
+    .side-nav-tab {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px;
+      background: rgba(255, 255, 255, 0.95); color: #374151;
+      border-radius: 16px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .side-nav-tab:hover { background: var(--light-green-bg); color: var(--primary-green); }
+    .side-nav-tab.active { background: var(--primary-green); color: #ffffff; border-color: var(--primary-green); }
+
+    .side-label {
+      position: absolute; left: 60px;
+      background: #0f172a; color: #ffffff;
+      font-size: 0.75rem; font-weight: 700;
+      padding: 0.4rem 0.75rem; border-radius: 8px;
+      white-space: nowrap; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .side-nav-tab:hover .side-label { opacity: 1; }
+
+    /* Layout Container & Hero Section */
+    .container { max-width: 1300px; margin: 2rem auto; padding: 0 1.5rem; }
+
+    .hero-section { 
+      text-align: center; 
+      margin-bottom: 3.5rem; 
+      background: rgba(255, 255, 255, 0.85);
+      padding: 2.5rem 1.5rem;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
+    }
+    .hero-title { font-size: 2.8rem; font-weight: 800; color: var(--primary-green); margin-bottom: 0.5rem; }
+    .hero-subtitle { color: var(--text-muted); font-size: 1.1rem; max-width: 780px; margin: 0 auto 1.8rem auto; line-height: 1.6; }
+
+    .hero-actions { display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem; }
+    .btn-primary-hero {
+      background-color: var(--primary-green); color: #fff;
+      padding: 0.85rem 1.8rem; border-radius: 30px; font-weight: 700; text-decoration: none;
+      transition: background 0.2s, transform 0.2s; border: none; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(11, 79, 28, 0.25);
+    }
+    .btn-primary-hero:hover { background-color: #073513; transform: translateY(-2px); }
+
+    .btn-secondary-hero {
+      background-color: rgba(255, 255, 255, 0.9); color: var(--primary-green);
+      border: 1.5px solid var(--primary-green);
+      padding: 0.85rem 1.8rem; border-radius: 30px; font-weight: 700; text-decoration: none;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .btn-secondary-hero:hover { background-color: var(--light-green-bg); transform: translateY(-2px); }
+
+    .dpi-tags { display: flex; justify-content: center; gap: 0.8rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .dpi-tag { background: #e0f2fe; color: #0369a1; padding: 0.3rem 0.85rem; border-radius: 6px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(3, 105, 161, 0.2); }
+
+    .search-bar { max-width: 600px; margin: 0 auto; position: relative; display: flex; gap: 0.5rem; }
+    .search-bar input {
+      flex-grow: 1; padding: 0.85rem 1.4rem;
+      background-color: #ffffff; border: 2px solid var(--border-color);
+      border-radius: 30px; font-size: 1rem; outline: none; transition: border-color 0.2s;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.03);
+    }
+    .search-bar input:focus { border-color: var(--accent-green); }
+
+    .voice-btn {
+      background: var(--light-green-bg); border: 1px solid var(--accent-green);
+      color: var(--primary-green); border-radius: 50%; width: 48px; height: 48px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; transition: all 0.2s; flex-shrink: 0;
+    }
+    .voice-btn:hover { background: var(--accent-green); color: #fff; }
+
+    /* Section Typography */
+    .section-title { font-size: 1.8rem; font-weight: 800; color: var(--primary-green); margin-bottom: 0.5rem; text-align: center; }
+    .section-subtitle { font-size: 1rem; color: var(--text-muted); text-align: center; margin-bottom: 2.5rem; }
+
+    /* Tools Grid */
+    .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(550px, 1fr)); gap: 2rem; margin-bottom: 4rem; }
+    @media (max-width: 650px) { .tools-grid { grid-template-columns: 1fr; } }
+
+    .tool-card {
+      background: var(--card-bg); border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm); border: 1px solid var(--border-color);
+      display: flex; flex-direction: column; overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      backdrop-filter: blur(8px);
+    }
+    .tool-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--accent-green); }
+
+    .card-banner { height: 180px; width: 100%; object-fit: cover; }
+    .card-content { padding: 1.5rem; display: flex; flex-direction: column; flex-grow: 1; }
+
+    .tool-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+    .tool-icon { font-size: 1.8rem; background: var(--light-green-bg); padding: 0.5rem 0.8rem; border-radius: 12px; }
+    .tool-title { font-size: 1.3rem; color: var(--primary-green); font-weight: 700; }
+    .tool-subtitle { font-size: 0.85rem; color: var(--text-muted); }
+
+    .features-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.8rem; margin-top: 0.5rem; flex-grow: 1; }
+    .feature-category { background-color: rgba(248, 250, 252, 0.8); padding: 0.8rem; border-radius: 10px; border: 1px solid var(--border-color); }
+    .feature-category h4 { font-size: 0.85rem; color: var(--primary-green); margin-bottom: 0.4rem; text-transform: uppercase; }
+    .feature-category ul { list-style: none; padding: 0; }
+    .feature-category li { font-size: 0.82rem; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
+    .feature-category li::before { content: "✓"; color: var(--accent-green); font-weight: bold; }
+
+    .action-btn {
+      margin-top: 1.5rem; padding: 0.8rem 1.2rem;
+      background-color: var(--primary-green); color: #ffffff;
+      border: none; border-radius: 10px; font-weight: 600; cursor: pointer; text-align: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .action-btn:hover { background-color: #073513; transform: translateY(-1px); }
+
+    /* Modern SaaS AI Chatbot UI (Modals) */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);
+      display: none; justify-content: center; align-items: center; z-index: 2000;
+      opacity: 0; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { display: flex; opacity: 1; }
+
+    .modal-box {
+      background: #ffffff; width: 90%; max-width: 720px;
+      border-radius: var(--border-radius); padding: 1.8rem;
+      position: relative; max-height: 90vh; display: flex; flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    }
+    .close-modal { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+    .close-modal:hover { color: var(--text-main); }
+
+    .chatbot-container {
+      margin-top: 1rem; border: 1px solid var(--border-color); border-radius: 12px;
+      display: flex; flex-direction: column; height: 440px; background: #fafafa; overflow: hidden;
+    }
+
+    .chat-messages { flex-grow: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.85rem; }
+    
+    .msg { max-width: 85%; padding: 0.75rem 1rem; border-radius: 14px; font-size: 0.9rem; line-height: 1.5; position: relative; }
+    .msg.bot { background-color: #ffffff; color: var(--text-main); align-self: flex-start; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); }
+    .msg.user { background-color: var(--primary-green); color: #ffffff; align-self: flex-end; }
+    
+    .msg-time { font-size: 0.68rem; opacity: 0.7; margin-top: 0.3rem; text-align: right; display: block; }
+
+    /* Typing Indicator */
+    .typing-indicator { display: flex; gap: 4px; padding: 4px 8px; align-items: center; }
+    .typing-dot { width: 6px; height: 6px; background: var(--text-muted); border-radius: 50%; animation: typing 1.4s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typing { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-5px); } }
+
+    /* Suggested Prompts Pills */
+    .suggested-prompts { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 0.8rem; background: #f1f5f9; border-bottom: 1px solid var(--border-color); }
+    .prompt-chip { background: #ffffff; border: 1px solid var(--border-color); padding: 0.3rem 0.75rem; border-radius: 15px; font-size: 0.78rem; font-weight: 600; color: var(--primary-green); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .prompt-chip:hover { background: var(--primary-green); color: #fff; }
+
+    .chat-input-area { display: flex; padding: 0.75rem; background: #ffffff; border-top: 1px solid var(--border-color); gap: 0.5rem; align-items: center; }
+    .chat-input-area input { flex-grow: 1; padding: 0.65rem 1rem; border: 1px solid var(--border-color); border-radius: 20px; outline: none; font-size: 0.9rem; }
+    .chat-input-area input:focus { border-color: var(--accent-green); }
+    
+    .chat-send-btn { background-color: var(--primary-green); color: #ffffff; border: none; padding: 0.65rem 1.25rem; border-radius: 20px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    .chat-send-btn:hover { background-color: #073513; }
+
+    .upload-box {
+      border: 2px dashed var(--accent-green); padding: 0.8rem; text-align: center;
+      border-radius: 8px; background: #f0fdf4; margin-bottom: 0.5rem; cursor: pointer; transition: background 0.2s;
+    }
+    .upload-box:hover { background: #dcfce7; }
+    .chart-box { background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px; padding: 0.5rem; margin-top: 0.6rem; height: 170px; width: 100%; }
+
+    /* Research Categories Grid */
+    .research-categories-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;
+    }
+    .category-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: var(--border-radius); padding: 1.5rem; text-align: left;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .category-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--accent-green); }
+    .category-icon { font-size: 2rem; margin-bottom: 0.8rem; display: inline-block; background: var(--light-green-bg); padding: 0.5rem 0.8rem; border-radius: 12px; }
+    .category-card h3 { font-size: 1.1rem; color: var(--primary-green); margin-bottom: 0.4rem; }
+    .category-card p { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Featured Research Section */
+    .featured-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-bottom: 4rem;
+    }
+    .featured-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: var(--border-radius); overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: var(--shadow-sm); transition: transform 0.25s ease;
+      backdrop-filter: blur(8px);
+    }
+    .featured-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+    .featured-body { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+    .featured-body h4 { font-size: 1.1rem; color: var(--primary-green); margin-bottom: 0.5rem; }
+    .featured-body p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem; flex-grow: 1; }
+    .read-more-btn {
+      align-self: flex-start; padding: 0.4rem 1rem; border-radius: 6px;
+      background: var(--light-green-bg); color: var(--primary-green);
+      font-size: 0.82rem; font-weight: 700; text-decoration: none; border: 1px solid rgba(16, 185, 129, 0.3);
+      transition: all 0.2s;
+    }
+    .read-more-btn:hover { background: var(--accent-green); color: #fff; }
+
+    /* Agricultural Statistics Banner */
+    .stats-section {
+      background: linear-gradient(135deg, rgba(11, 79, 28, 0.95), rgba(7, 53, 19, 0.95)),
+                  url('https://images.unsplash.com/photo-1586771107445-d3ca888129ff?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      color: #ffffff; border-radius: var(--border-radius);
+      padding: 3rem 2rem; margin-bottom: 4rem; text-align: center;
+      box-shadow: var(--shadow-md);
+    }
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 2rem; margin-top: 2rem;
+    }
+    .stat-card h3 { font-size: 2.5rem; font-weight: 800; color: #a7f3d0; margin-bottom: 0.2rem; }
+    .stat-card p { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.9; }
+
+    /* FAQ Accordion Section */
+    .faq-container { max-width: 800px; margin: 0 auto 4rem auto; }
+    .faq-item {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+    .faq-question {
+      width: 100%; text-align: left; padding: 1.1rem 1.25rem;
+      background: none; border: none; font-size: 1rem; font-weight: 700;
+      color: var(--primary-green); cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    .faq-answer {
+      padding: 0 1.25rem 1.1rem 1.25rem; font-size: 0.9rem;
+      color: var(--text-muted); display: none; line-height: 1.6;
+    }
+    .faq-item.active .faq-answer { display: block; }
+    .faq-item.active .faq-question::after { content: "−"; }
+    .faq-question::after { content: "+"; font-size: 1.2rem; color: var(--accent-green); }
+
+    /* Feedback & Testimonial Section */
+    .feedback-section { margin-bottom: 4rem; }
+    .reviews-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;
+    }
+    .review-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: var(--border-radius); padding: 1.25rem; box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(8px);
+    }
+    .stars { color: #f59e0b; margin-bottom: 0.5rem; font-size: 0.9rem; }
+    .review-card p { font-size: 0.88rem; color: var(--text-main); font-style: italic; margin-bottom: 0.75rem; }
+    .review-author { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+
+    .feedback-form-card {
+      background: var(--card-bg); border: 1px solid var(--border-color);
+      border-radius: var(--border-radius); padding: 2rem; max-width: 650px; margin: 0 auto;
+      box-shadow: var(--shadow-sm); backdrop-filter: blur(8px);
+    }
+    .form-group { margin-bottom: 1rem; text-align: left; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; color: var(--text-main); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 0.7rem 1rem; border: 1px solid var(--border-color);
+      border-radius: 8px; font-size: 0.9rem; outline: none; background: #ffffff;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent-green); }
+
+    /* Footer */
+    footer {
+      background: rgba(255, 255, 255, 0.95); border-top: 1px solid var(--border-color);
+      padding: 3rem 1.5rem 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.88rem;
+      backdrop-filter: blur(10px);
+    }
+    .footer-content { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+    .footer-logo { height: 38px; object-fit: contain; }
+  </style>
+</head>
+<body>
+
+  <div id="loginOverlay">
+    <div class="login-card">
+      <img src="Logo.jpg" alt="GreenGrow AI Logo" class="login-logo">
+      <h2 class="login-title">GreenGrow AI</h2>
+      <p class="login-subtitle">Agricultural Research & Intelligence Platform</p>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="input-group">
+          <label for="passInput">Access Password</label>
+          <div class="password-wrapper">
+            <input type="password" id="passInput" placeholder="Enter platform password..." required>
+            <button type="button" class="toggle-pw-btn" onclick="togglePasswordVisibility()">👁️</button>
+          </div>
+        </div>
+
+        <div class="login-options">
+          <label><input type="checkbox" id="rememberMe"> Remember this device</label>
+        </div>
+
+        <button type="submit" class="login-btn">Enter GreenGrow AI</button>
+        <div id="loginError" class="login-error">Incorrect password. Please try again.</div>
+      </form>
+
+      <div class="login-footer">
+        Demo Platform • Built for Viksit Bharat Buildathon
+      </div>
+    </div>
+  </div>
+
+  <div class="side-nav-container">
+    <a href="index.html" class="side-nav-tab">
+      <span style="font-size: 1.2rem;">🏠</span>
+      <div class="side-label">Main Home Portal</div>
+    </a>
+    <a href="rover.html" class="side-nav-tab">
+      <span style="font-size: 1.2rem;">🚜</span>
+      <div class="side-label">Rover Specifications</div>
+    </a>
+    <a href="dashboard.html" class="side-nav-tab">
+      <span style="font-size: 1.2rem;">🇮🇳</span>
+      <div class="side-label">Viksit Dashboard</div>
+    </a>
+    <a href="configurator.html" class="side-nav-tab">
+      <span style="font-size: 1.2rem;">⚙️</span>
+      <div class="side-label">Configurator</div>
+    </a>
+    <a href="GreenGrowAI.html" class="side-nav-tab active">
+      <span style="font-size: 1.2rem;">🤖</span>
+      <div class="side-label">GreenGrow AI</div>
+    </a>
+  </div>
+
+  <header>
+    <div class="header-container">
+      <a href="#"><img src="Logo.jpg" alt="GreenGrow AI Logo" class="brand-logo-img"></a>
+      <div class="header-controls">
+        <select class="lang-select" id="langSelect">
+          <option value="en">English</option>
+          <option value="hi">हिंदी (Hindi)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+        </select>
+        <div class="system-badge"><span class="status-dot"></span> BharatVistaar AI Active</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    
+    <div class="hero-section" id="researchHero">
+      <h1 class="hero-title">GreenGrow AI</h1>
+      <p style="font-size:1.25rem; font-weight:700; color:var(--saffron-accent); margin-bottom:0.5rem;">Agricultural Research & Intelligence Platform</p>
+      <p class="hero-subtitle">GreenGrow AI helps students, researchers, teachers, and future agripreneurs explore verified agricultural knowledge, perform crop diagnostics, analyze soil science, and review market intelligence using Artificial Intelligence.</p>
+      
+      <div class="hero-actions">
+        <button class="btn-primary-hero" onclick="scrollToSection('researchCategories')">Start Research</button>
+        <button class="btn-secondary-hero" onclick="scrollToSection('toolsGrid')">Explore Knowledge Hub</button>
+      </div>
+
+      <div class="dpi-tags">
+        <span class="dpi-tag">AgriStack Ready</span>
+        <span class="dpi-tag">e-NAM Mandi API</span>
+        <span class="dpi-tag">Voice-First AI</span>
+        <span class="dpi-tag">ISRO Bhuvan GIS</span>
+      </div>
+
+      <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Search features or ask (e.g., Mandi price, Paddy, Urea, Soil pH)..." onkeyup="filterTools()">
+        <button class="voice-btn" onclick="startVoiceRecognition('searchInput')" title="Voice Search">🎙️</button>
+      </div>
+    </div>
+
+    <div class="tools-grid" id="toolsGrid">
+      
+      <div class="tool-card">
+        <img class="card-banner" src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80" alt="Soil Intelligence">
+        <div class="card-content">
+          <div class="tool-header">
+            <div class="tool-icon">🌾</div>
+            <div>
+              <h3 class="tool-title">1. Crop & Soil Intelligence</h3>
+              <p class="tool-subtitle">Kharif/Rabi Advisory & Soil Health Analysis</p>
+            </div>
+          </div>
+          <div class="features-list">
+            <div class="feature-category">
+              <h4>Soil Testing</h4>
+              <ul>
+                <li>Health Card Analysis</li>
+                <li>Moisture & pH Check</li>
+                <li>NPK Fertigation Plans</li>
+              </ul>
+            </div>
+            <div class="feature-category">
+              <h4>Crop Selection</h4>
+              <ul>
+                <li>Kharif & Rabi Advisory</li>
+                <li>Paddy-Wheat Rotation</li>
+                <li>Harvest Yield Estimates</li>
+              </ul>
+            </div>
+          </div>
+          <button class="action-btn" onclick="openModal('soilModal')">Launch Crop & Soil Hub</button>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <img class="card-banner" src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80" alt="Crop Doctor Vision">
+        <div class="card-content">
+          <div class="tool-header">
+            <div class="tool-icon">🔬</div>
+            <div>
+              <h3 class="tool-title">2. Crop Doctor & Vision AI</h3>
+              <p class="tool-subtitle">Leaf Scan, Disease Identification & Diagnostic Reports</p>
+            </div>
+          </div>
+          <div class="features-list">
+            <div class="feature-category">
+              <h4>Vision Diagnostics</h4>
+              <ul>
+                <li>Leaf Photo Scanner</li>
+                <li>Fungal/Viral Identification</li>
+                <li>Organic Treatment Plans</li>
+              </ul>
+            </div>
+            <div class="feature-category">
+              <h4>Field Inspection</h4>
+              <ul>
+                <li>Pest Attack Alerts</li>
+                <li>Yellowing Leaf Check</li>
+                <li>Growth Progress Tracker</li>
+              </ul>
+            </div>
+          </div>
+          <button class="action-btn" onclick="openModal('doctorModal')">Open AI Crop Doctor</button>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <img class="card-banner" src="https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=80" alt="Monsoon & Irrigation">
+        <div class="card-content">
+          <div class="tool-header">
+            <div class="tool-icon">🌧️</div>
+            <div>
+              <h3 class="tool-title">3. Monsoon & Resource Manager</h3>
+              <p class="tool-subtitle">Monsoon Forecasting & Smart Drip Irrigation Advisor</p>
+            </div>
+          </div>
+          <div class="features-list">
+            <div class="feature-category">
+              <h4>Monsoon Alerts</h4>
+              <ul>
+                <li>District Rainfall Forecast</li>
+                <li>Temperature & Humidity</li>
+                <li>Weather-Based Sowing Advice</li>
+              </ul>
+            </div>
+            <div class="feature-category">
+              <h4>Irrigation Control</h4>
+              <ul>
+                <li>Borewell Water Planning</li>
+                <li>Drip Schedule Optimization</li>
+                <li>Urea Fertigation Calculator</li>
+              </ul>
+            </div>
+          </div>
+          <button class="action-btn" onclick="openModal('resourceModal')">Manage Monsoon & Water</button>
+        </div>
+      </div>
+
+      <div class="tool-card">
+        <img class="card-banner" src="https://images.unsplash.com/photo-1595974482597-4b8da8879bc5?auto=format&fit=crop&w=800&q=80" alt="Mandi Market">
+        <div class="card-content">
+          <div class="tool-header">
+            <div class="tool-icon">📈</div>
+            <div>
+              <h3 class="tool-title">4. Mandi & Market Intelligence</h3>
+              <p class="tool-subtitle">Live APMC Rates, MSP Trackers & Visual Graph Predictions</p>
+            </div>
+          </div>
+          <div class="features-list">
+            <div class="feature-category">
+              <h4>Mandi Tracking</h4>
+              <ul>
+                <li>Live APMC Mandi Rates (₹)</li>
+                <li>District Price Trends</li>
+                <li>MSP Government Alerts</li>
+              </ul>
+            </div>
+            <div class="feature-category">
+              <h4>Analytics</h4>
+              <ul>
+                <li>Best Selling Time Predictor</li>
+                <li>Direct Buyer Connection</li>
+                <li>Profit Margin Calculator</li>
+              </ul>
+            </div>
+          </div>
+          <button class="action-btn" onclick="openModal('mandiModal')">Open Mandi Intelligence</button>
+        </div>
+      </div>
+
+    </div>
+
+    <h2 class="section-title" id="researchCategories">Research Categories</h2>
+    <p class="section-subtitle">Explore academic disciplines and technical research domains</p>
+    
+    <div class="research-categories-grid">
+      <div class="category-card">
+        <span class="category-icon">🧪</span>
+        <h3>Soil Science</h3>
+        <p>Nutrient management, NPK balancing, soil pH chemistry, and organic matter restoration.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🌱</span>
+        <h3>Crop Science</h3>
+        <p>Genetics, crop rotation strategies, yield optimization, and post-harvest physiology.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🤖</span>
+        <h3>Agricultural AI</h3>
+        <p>Computer vision diagnostics, predictive yield modeling, and machine learning in farming.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">⛅</span>
+        <h3>Climate Science</h3>
+        <p>Monsoon weather modeling, drought mitigation, and climate-resilient crop selection.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">💧</span>
+        <h3>Water Management</h3>
+        <p>Precision drip irrigation, rainwater harvesting systems, and fertigation efficiency.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🪲</span>
+        <h3>Pest & Disease</h3>
+        <p>Integrated Pest Management (IPM), fungal pathogens, and botanical bio-pesticides.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🧬</span>
+        <h3>Biotechnology</h3>
+        <p>Tissue culture, bio-fertilizers, transgenic traits, and molecular crop breeding.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">🛰️</span>
+        <h3>Smart Farming</h3>
+        <p>GIS mapping, satellite remote sensing, autonomous tractors, and IoT sensors.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">📊</span>
+        <h3>Agri Statistics</h3>
+        <p>APMC price trends, crop production volumes, and export-import market analysis.</p>
+      </div>
+      <div class="category-card">
+        <span class="category-icon">📜</span>
+        <h3>Govt Policies</h3>
+        <p>AgriStack initiatives, MSP subsidies, e-NAM market integration, and PM-KISAN schemes.</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Featured Research Topics</h2>
+    <p class="section-subtitle">In-depth technical papers and emerging agricultural innovations</p>
+
+    <div class="featured-grid">
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>AI Disease Detection</h4>
+          <p>Convolutional Neural Networks (CNNs) trained on thousands of leaf images enable early identification of yellow rust and leaf blight.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('doctorModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>Precision Agriculture</h4>
+          <p>Variable rate application (VRA) of water and fertilizers reduces resource waste by up to 30% while increasing farm profitability.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('soilModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>Vertical Farming</h4>
+          <p>Controlled Environment Agriculture (CEA) utilizing stacked hydroponic layers for year-round pesticide-free crop production.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('soilModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>Climate Smart Agriculture</h4>
+          <p>Adapting cropping calendars and deploying drought-tolerant crop varieties to maintain food security under changing monsoon patterns.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('resourceModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>Hydroponics & Nutrient Solutions</h4>
+          <p>Soilless cultivation using mineral nutrient solutions in water solvents to optimize growth speed and space efficiency.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('soilModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+      <div class="featured-card">
+        <div class="featured-body">
+          <h4>Drone Technology in Farming</h4>
+          <p>Unmanned Aerial Vehicles (UAVs) equipped with multispectral sensors for field mapping, crop vigor checks, and automated spraying.</p>
+          <a href="#" class="read-more-btn" onclick="openModal('doctorModal'); return false;">Read Research & Try AI</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-section">
+      <h2 style="font-size:2rem; font-weight:800; margin-bottom:0.5rem;">Global Agricultural Research Reach</h2>
+      <p style="opacity:0.9;">Empowering students, researchers, and farmers with verified data</p>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>15,000+</h3>
+          <p>Research Articles</p>
+        </div>
+        <div class="stat-card">
+          <h3>400+</h3>
+          <p>Crop Species</p>
+        </div>
+        <div class="stat-card">
+          <h3>2,000+</h3>
+          <p>Research Topics</p>
+        </div>
+        <div class="stat-card">
+          <h3>250,000+</h3>
+          <p>Questions Answered</p>
+        </div>
+        <div class="stat-card">
+          <h3>120+</h3>
+          <p>Countries Covered</p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <p class="section-subtitle">Common technical and research inquiries answered by AI</p>
+
+    <div class="faq-container">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">What is precision agriculture?</button>
+        <div class="faq-answer">Precision agriculture is a management concept based on observing, measuring, and responding to inter- and intra-field variability in crops using GPS, sensors, and AI to optimize resource use.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">How does AI help farming?</button>
+        <div class="faq-answer">AI assists farming through image recognition for disease detection, predictive weather modeling, field monitoring via satellite analysis, and automated irrigation control.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">What causes soil erosion?</button>
+        <div class="faq-answer">Soil erosion is primarily caused by water runoff, strong winds, overgrazing, deforestation, and intensive tillage that breaks down soil structure and removes protective vegetation cover.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">Difference between organic and chemical fertilizer?</button>
+        <div class="faq-answer">Organic fertilizers derive from biological sources (manure, compost) and improve soil microbial health over time, whereas chemical fertilizers provide synthetic concentrated nutrients for immediate plant uptake.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">What is crop rotation?</button>
+        <div class="faq-answer">Crop rotation is the practice of growing different types of crops sequentially on the same land to disrupt pest cycles, replenish soil nutrients, and improve overall soil health.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">How can soil fertility be improved?</button>
+        <div class="faq-answer">Soil fertility can be improved by adding organic compost, integrating leguminous cover crops for nitrogen fixation, practicing reduced tillage, and maintaining balanced pH levels.</div>
+      </div>
+    </div>
+
+    <div class="feedback-section">
+      <h2 class="section-title">Platform Reviews & Feedback</h2>
+      <p class="section-subtitle">What researchers and students say about GreenGrow AI</p>
+
+      <div class="reviews-grid" id="reviewsGrid">
+        <div class="review-card">
+          <div class="stars">★★★★★</div>
+          <p>"Excellent platform for agricultural research. The AI responses are fast, accurate, and deeply technical."</p>
+          <div class="review-author">Dr. A. Sharma • Agri Researcher</div>
+        </div>
+        <div class="review-card">
+          <div class="stars">★★★★★</div>
+          <p>"The AI explanations are easy to understand and backed by clear NPK data. Highly recommended for students!"</p>
+          <div class="review-author">Priya Patel • BSC Student</div>
+        </div>
+        <div class="review-card">
+          <div class="stars">★★★★★</div>
+          <p>"Very useful for school projects and exploring sustainable farming methods. The leaf photo scanner is impressive."</p>
+          <div class="review-author">Raman Singh • Agripreneur</div>
+        </div>
+      </div>
+
+      <div class="feedback-form-card">
+        <h3 style="color:var(--primary-green); text-align:center; margin-bottom:1.2rem;">Submit Feedback</h3>
+        <form id="feedbackForm" onsubmit="handleFeedbackSubmit(event)">
+          <div class="form-group">
+            <label for="fbName">Full Name</label>
+            <input type="text" id="fbName" placeholder="Enter your name" required>
+          </div>
+          <div class="form-group">
+            <label for="fbRating">Rating</label>
+            <select id="fbRating" required>
+              <option value="5">★★★★★ (5/5)</option>
+              <option value="4">★★★★☆ (4/5)</option>
+              <option value="3">★★★☆☆ (3/5)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="fbComments">Feedback Comments</label>
+            <textarea id="fbComments" rows="3" placeholder="Share your experience or research feedback..." required></textarea>
+          </div>
+          <button type="submit" class="action-btn" style="width:100%; margin-top:0.5rem;">Submit Feedback</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="modal-overlay" id="soilModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeModal('soilModal')">&times;</button>
+      <h3 style="color:var(--primary-green);">🌾 Soil & Crop AI Advisor</h3>
+      <p class="tool-subtitle">Ask questions about NPK dosages, soil health, and crop rotation.</p>
+
+      <div class="chatbot-container">
+        <div class="suggested-prompts">
+          <span class="prompt-chip" onclick="applyPrompt('soilInput', 'Explain crop rotation')">Explain crop rotation</span>
+          <span class="prompt-chip" onclick="applyPrompt('soilInput', 'How does soil pH affect crops?')">How does soil pH affect crops?</span>
+          <span class="prompt-chip" onclick="applyPrompt('soilInput', 'Difference between organic and chemical fertilizers')">Organic vs Chemical</span>
+        </div>
+
+        <div class="chat-messages" id="soilChatMsgs">
+          <div class="msg bot">
+            Namaste! I am your Soil & Crop Research Advisor. Ask me anything about soil health, NPK ratios, pH chemistry, or crop rotation!
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="soilInput" placeholder="Ask about Urea dosage, Soil pH..." onkeypress="handleEnter(event, 'soil')">
+          <button class="voice-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="startVoiceRecognition('soilInput')" title="Speak Query">🎙️</button>
+          <button class="chat-send-btn" onclick="sendMessage('soil')">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="doctorModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeModal('doctorModal')">&times;</button>
+      <h3 style="color:var(--primary-green);">🔬 Crop Doctor Vision & Diagnostic AI</h3>
+      <p class="tool-subtitle" style="margin-bottom: 0.8rem;">Upload a leaf photo to perform instant AI disease detection or describe symptoms.</p>
+
+      <div class="upload-box" onclick="document.getElementById('leafImageInput').click()">
+        <p>📷 <strong>Click to Upload or Snap Leaf Photo</strong></p>
+        <span style="font-size:0.8rem; color:var(--text-muted);">Supports JPG, PNG (Paddy, Wheat, Cotton, Mustard)</span>
+        <input type="file" id="leafImageInput" accept="image/*" style="display:none;" onchange="analyzeLeafImage(event)">
+      </div>
+
+      <div class="chatbot-container">
+        <div class="suggested-prompts">
+          <span class="prompt-chip" onclick="applyPrompt('doctorInput', 'What causes leaf yellowing?')">What causes leaf yellowing?</span>
+          <span class="prompt-chip" onclick="applyPrompt('doctorInput', 'How to prevent bollworm attacks?')">Bollworm prevention</span>
+          <span class="prompt-chip" onclick="applyPrompt('doctorInput', 'Future of AI in agriculture')">Future of AI</span>
+        </div>
+
+        <div class="chat-messages" id="doctorChatMsgs">
+          <div class="msg bot">
+            Namaste! Upload a leaf photo above or describe crop symptoms (e.g., yellow spots on leaves).
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="doctorInput" placeholder="Describe crop symptoms..." onkeypress="handleEnter(event, 'doctor')">
+          <button class="voice-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="startVoiceRecognition('doctorInput')" title="Speak Query">🎙️</button>
+          <button class="chat-send-btn" onclick="sendMessage('doctor')">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="resourceModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeModal('resourceModal')">&times;</button>
+      <h3 style="color:var(--primary-green);">🌧️ Monsoon & Water Management Assistant</h3>
+      <p class="tool-subtitle">Get advice on irrigation timing, rain forecasts, and drip systems.</p>
+
+      <div class="chatbot-container">
+        <div class="suggested-prompts">
+          <span class="prompt-chip" onclick="applyPrompt('resourceInput', 'Explain drip irrigation.')">Explain drip irrigation</span>
+          <span class="prompt-chip" onclick="applyPrompt('resourceInput', 'Monsoon rain forecasts')">Monsoon trends</span>
+        </div>
+
+        <div class="chat-messages" id="resourceChatMsgs">
+          <div class="msg bot">
+            Namaste! Ask me about rainfall forecasts, monsoon timing in your state, or drip irrigation systems.
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="resourceInput" placeholder="Ask about rainfall, drip scheduling..." onkeypress="handleEnter(event, 'resource')">
+          <button class="voice-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="startVoiceRecognition('resourceInput')" title="Speak Query">🎙️</button>
+          <button class="chat-send-btn" onclick="sendMessage('resource')">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="mandiModal">
+    <div class="modal-box">
+      <button class="close-modal" onclick="closeModal('mandiModal')">&times;</button>
+      <h3 style="color:var(--primary-green);">📈 Mandi Market & MSP AI Assistant</h3>
+      <p class="tool-subtitle">Live APMC Mandi price tracking and dynamic price trend charts.</p>
+
+      <div class="chatbot-container">
+        <div class="chat-messages" id="mandiChatMsgs">
+          <div class="msg bot">
+            Namaste! Ask about live APMC Mandi prices or government MSPs.
+            <div class="chart-box"><canvas id="mandiChart"></canvas></div>
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+
+        <div class="chat-input-area">
+          <input type="text" id="mandiInput" placeholder="Ask about Wheat MSP, Paddy Mandi rates..." onkeypress="handleEnter(event, 'mandi')">
+          <button class="voice-btn" style="width:36px; height:36px; font-size:0.9rem;" onclick="startVoiceRecognition('mandiInput')" title="Speak Query">🎙️</button>
+          <button class="chat-send-btn" onclick="sendMessage('mandi')">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="footer-content">
+      <img src="Logo.jpg" alt="GreenGrow AI Logo" class="footer-logo">
+      <p style="font-weight:700; color:var(--primary-green);">GreenGrow AI — Agricultural Research & Intelligence Platform</p>
+      <p>Built for Viksit Bharat Buildathon • Supporting Sustainable Agriculture & Student Innovation</p>
+      <p style="font-size:0.8rem; margin-top:0.5rem;">&copy; 2026 GreenGrow AI. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    let mandiChartInstance = null;
+
+    // Password Check & Login Handling
+    function handleLogin(e) {
+      e.preventDefault();
+      const pass = document.getElementById('passInput').value;
+      const errorEl = document.getElementById('loginError');
+      
+      if (pass === 'GreenGrow2026') {
+        const overlay = document.getElementById('loginOverlay');
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+        }, 500);
+      } else {
+        errorEl.style.display = 'block';
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const passInput = document.getElementById('passInput');
+      passInput.type = passInput.type === 'password' ? 'text' : 'password';
+    }
+
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      item.classList.toggle('active');
+    }
+
+    function applyPrompt(inputId, text) {
+      document.getElementById(inputId).value = text;
+    }
+
+    // Feedback Submission
+    function handleFeedbackSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('fbName').value.trim();
+      const rating = document.getElementById('fbRating').value;
+      const comments = document.getElementById('fbComments').value.trim();
+
+      if (!name || !comments) return;
+
+      const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+      const grid = document.getElementById('reviewsGrid');
+
+      const card = document.createElement('div');
+      card.className = 'review-card';
+      card.innerHTML = `
+        <div class="stars">${stars}</div>
+        <p>"${comments}"</p>
+        <div class="review-author">${name} • Verified User</div>
+      `;
+
+      grid.prepend(card);
+      document.getElementById('feedbackForm').reset();
+      alert('Thank you! Your feedback has been dynamically added to the research wall.');
+    }
+
+    // Search Filter
+    function filterTools() {
+      const searchValue = document.getElementById('searchInput').value.toLowerCase();
+      const cards = document.querySelectorAll('.tool-card');
+
+      cards.forEach(card => {
+        const textContent = card.innerText.toLowerCase();
+        if (textContent.includes(searchValue)) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+
+    // Modal Control
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      if (id === 'mandiModal' && !mandiChartInstance) {
+        setTimeout(initMandiChart, 200);
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function handleEnter(e, type) {
+      if (e.key === 'Enter') {
+        sendMessage(type);
+      }
+    }
+
+    // Voice Recognition (Web Speech API)
+    function startVoiceRecognition(inputId) {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        alert("Voice speech recognition is not supported in this browser. Please try Google Chrome or Edge.");
+        return;
+      }
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      const lang = document.getElementById('langSelect').value;
+      recognition.lang = lang === 'hi' ? 'hi-IN' : (lang === 'te' ? 'te-IN' : (lang === 'pa' ? 'pa-IN' : 'en-IN'));
+      
+      const targetInput = document.getElementById(inputId);
+      const originalPlaceholder = targetInput.placeholder;
+      targetInput.placeholder = "Listening... Speak now...";
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        targetInput.value = transcript;
+        targetInput.placeholder = originalPlaceholder;
+      };
+
+      recognition.onerror = function() {
+        targetInput.placeholder = "Speech not recognized. Try typing.";
+        setTimeout(() => { targetInput.placeholder = originalPlaceholder; }, 2000);
+      };
+    }
+
+    // Image Upload & AI Vision Diagnosis Simulation
+    function analyzeLeafImage(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const chatMsgs = document.getElementById('doctorChatMsgs');
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Add User Message showing Uploaded File
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.innerHTML = `📷 <em>Uploaded Leaf Image: ${file.name}</em><span class="msg-time">${timeStr}</span>`;
+      chatMsgs.appendChild(userMsg);
+
+      // Typing Indicator
+      const typingMsg = document.createElement('div');
+      typingMsg.className = 'msg bot';
+      typingMsg.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+      chatMsgs.appendChild(typingMsg);
+      chatMsgs.scrollTop = chatMsgs.scrollHeight;
+
+      // AI Vision Scan Response
+      setTimeout(() => {
+        chatMsgs.removeChild(typingMsg);
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+        botMsg.innerHTML = `
+          <strong>🔍 AI Vision Scan Diagnostic Result:</strong><br>
+          • <strong>Detected Condition:</strong> Yellow Rust / Fungal Infection<br>
+          • <strong>Model Confidence:</strong> 94.6%<br>
+          • <strong>Recommended Action:</strong> Spray <strong>Propiconazole 25% EC @ 1ml/Liter water</strong>. Ensure adequate Nitrogen balance and avoid excessive moisture accumulation on leaves.
+          <span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        `;
+        chatMsgs.appendChild(botMsg);
+        chatMsgs.scrollTop = chatMsgs.scrollHeight;
+      }, 1200);
+    }
+
+    // Interactive Chat Messaging Logic
+    function sendMessage(type) {
+      const inputEl = document.getElementById(`${type}Input`);
+      const msgContainer = document.getElementById(`${type}ChatMsgs`);
+      const text = inputEl.value.trim();
+
+      if (!text) return;
+
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'msg user';
+      userMsg.innerHTML = `${text}<span class="msg-time">${timeStr}</span>`;
+      msgContainer.appendChild(userMsg);
+
+      inputEl.value = '';
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      // Add Typing Indicator
+      const typingMsg = document.createElement('div');
+      typingMsg.className = 'msg bot';
+      typingMsg.innerHTML = `<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+      msgContainer.appendChild(typingMsg);
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+
+      // AI Bot Reply Logic
+      setTimeout(() => {
+        msgContainer.removeChild(typingMsg);
+        const botMsg = document.createElement('div');
+        botMsg.className = 'msg bot';
+
+        if (type === 'mandi') {
+          const responseObj = getMandiBotReply(text.toLowerCase());
+          botMsg.innerHTML = responseObj.text + `<span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+          msgContainer.appendChild(botMsg);
+
+          if (responseObj.chartData) {
+            const chartId = `chart_${Date.now()}`;
+            const chartContainer = document.createElement('div');
+            chartContainer.className = 'chart-box';
+            chartContainer.innerHTML = `<canvas id="${chartId}"></canvas>`;
+            botMsg.appendChild(chartContainer);
+            
+            setTimeout(() => {
+              renderMessageChart(chartId, responseObj.chartData);
+              msgContainer.scrollTop = msgContainer.scrollHeight;
+            }, 100);
+          }
+        } else {
+          botMsg.innerHTML = getBotReply(type, text.toLowerCase()) + `<span class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>`;
+          msgContainer.appendChild(botMsg);
+        }
+
+        msgContainer.scrollTop = msgContainer.scrollHeight;
+      }, 800);
+    }
+
+    // Standard AI Logic Responses
+    function getBotReply(type, query) {
+      if (query.includes('crop rotation') || query.includes('rotation')) {
+        return "<strong>Crop Rotation Concept:</strong> Crop rotation is the systemic practice of growing different crop families sequentially in the same field. For example, alternating legumes (Chickpea/Soybean) with cereals (Wheat/Paddy) restores soil nitrogen through biological fixation and breaks soil-borne pest cycles.";
+      }
+      if (query.includes('ph')) {
+        return "<strong>Soil pH Impact:</strong> Ideal soil pH for most essential nutrients is <strong>6.0 to 7.5</strong>. When pH drops below 5.5 (acidic), Phosphorous becomes chemically bound to iron and aluminum, making it unavailable to plants.";
+      }
+      if (query.includes('yellowing') || query.includes('yellow')) {
+        return "<strong>Leaf Yellowing (Chlorosis):</strong> Yellowing usually signifies Nitrogen deficiency or fungal pathogens like Rust. If upper new leaves turn yellow first, suspect Iron/Sulfur deficiency. If lower older leaves turn yellow, it indicates Nitrogen mobility to newer growth.";
+      }
+      if (query.includes('drip') || query.includes('irrigation')) {
+        return "<strong>Drip Irrigation Efficiency:</strong> Drip systems deliver water and liquid fertilizer (fertigation) directly to crop root zones at low flow rates, reducing evaporation loss by up to 50% and weed proliferation compared to flood irrigation.";
+      }
+      if (query.includes('organic') || query.includes('chemical')) {
+        return "<strong>Organic vs Chemical Fertilizers:</strong> Organic fertilizers (FYM, compost) build soil organic carbon (SOC) and enhance microbial diversity over time. Chemical fertilizers (Urea, DAP) provide immediate high-concentration NPK macronutrients but do not improve soil structure.";
+      }
+      if (query.includes('future') || query.includes('ai')) {
+        return "<strong>Future of AI in Agriculture:</strong> AI is transforming farming through satellite-driven precision crop monitoring, autonomous robotics for micro-weeding, predictive yield forecasting, and hyperspectral vision diagnostics for instant disease detection.";
+      }
+
+      if (type === 'soil') {
+        if (query.includes('urea') || query.includes('dap') || query.includes('npk')) {
+          return "For staple crops like Wheat and Paddy, the standard NPK recommendation is <strong>4:2:1 (N:P:K)</strong>. Apply ~45kg Urea per acre split into 2-3 top-dressing doses.";
+        }
+        return "I recommend reviewing your Soil Health Card parameters. Adding well-decomposed Farmyard Manure (FYM) before Kharif sowing significantly improves soil water retention and aeration!";
+      }
+
+      if (type === 'doctor') {
+        if (query.includes('insect') || query.includes('pest') || query.includes('worm')) {
+          return "For bollworms or stem borers, consider <strong>Neem oil (10,000 PPM)</strong> as an eco-friendly IPM step, or consult your regional KVK for target chemical sprays.";
+        }
+        return "Please upload a clear leaf photo using the scanner above for an automated computer vision diagnostic report!";
+      }
+
+      if (type === 'resource') {
+        if (query.includes('rain') || query.includes('monsoon') || query.includes('weather')) {
+          return "Monsoon trends indicate light to moderate showers over the next week. Pause heavy field flood irrigation to prevent waterlogging.";
+        }
+        return "Always schedule irrigation during early morning or late evening hours to minimize evapotranspiration losses!";
+      }
+
+      return "I am GreenGrow AI's research assistant. Ask me about soil science, crop physiology, weather forecasting, or market trends!";
+    }
+
+    // Mandi Market Responses with Dynamic Chart Data
+    function getMandiBotReply(query) {
+      if (query.includes('paddy') || query.includes('rice') || query.includes('dhan')) {
+        return {
+          text: "Today's APMC Mandi rate for <strong>Paddy (Common)</strong> is approx <strong>₹2,183 - ₹2,350 / Quintal</strong>. Price trend overview:",
+          chartData: {
+            label: 'Paddy Price (₹/Quintal)',
+            labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            data: [2100, 2150, 2183, 2220, 2290, 2350],
+            borderColor: '#10b981'
+          }
+        };
+      } else if (query.includes('wheat') || query.includes('gehun')) {
+        return {
+          text: "Current <strong>Wheat MSP</strong> is set at <strong>₹2,275 / Quintal</strong>. Market price trend in APMC Mandis:",
+          chartData: {
+            label: 'Wheat Price (₹/Quintal)',
+            labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            data: [2150, 2200, 2275, 2310, 2340, 2380],
+            borderColor: '#ea580c'
+          }
+        };
+      } else if (query.includes('cotton') || query.includes('kapas')) {
+        return {
+          text: "Medium Staple Cotton MSP is <strong>₹6,620 / Quintal</strong>. Local market trends show strong demand:",
+          chartData: {
+            label: 'Cotton Price (₹/Quintal)',
+            labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            data: [6400, 6550, 6620, 6780, 6900, 7050],
+            borderColor: '#0b4f1c'
+          }
+        };
+      } else {
+        return {
+          text: "Here is the general APMC Mandi average crop index trend across major commodity markets (₹/Quintal):",
+          chartData: {
+            label: 'Crop Price Index (₹/Quintal)',
+            labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+            data: [2300, 2350, 2410, 2450, 2520, 2590],
+            borderColor: '#10b981'
+          }
+        };
+      }
+    }
+
+    // Chart Initializers
+    function initMandiChart() {
+      const ctx = document.getElementById('mandiChart');
+      if (!ctx) return;
+
+      mandiChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr (Est)'],
+          datasets: [{
+            label: 'Average Mandi Price Index (₹/Qtl)',
+            data: [2150, 2210, 2275, 2320, 2390, 2450],
+            borderColor: '#0b4f1c',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { boxWidth: 12, font: { size: 10 } } }
+          },
+          scales: {
+            y: { ticks: { font: { size: 9 } } },
+            x: { ticks: { font: { size: 9 } } }
+          }
+        }
+      });
+    }
+
+    function renderMessageChart(canvasId, chartData) {
+      const ctx = document.getElementById(canvasId);
+      if (!ctx) return;
+
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: chartData.label,
+            data: chartData.data,
+            borderColor: chartData.borderColor,
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            fill: true,
+            tension: 0.3,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, labels: { boxWidth: 10, font: { size: 10 } } }
+          },
+          scales: {
+            y: { ticks: { font: { size: 9 } } },
+            x: { ticks: { font: { size: 9 } } }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
