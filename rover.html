@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenGrow AI | Enterprise Commercial Showroom & Research Repository</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(226, 232, 240, 0.8); }
+        
+        /* Perspective viewport layout */
+        .showroom-viewport { perspective: 1600px; }
+        .showroom-card {
+            transform: rotateX(4deg) rotateY(-2deg);
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .showroom-card:hover { transform: rotateX(0deg) rotateY(0deg) scale(1.005); }
+
+        /* Coordinate Target Pins */
+        .hotspot-node {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            background: rgba(22, 163, 74, 0.9);
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 25px rgba(22, 163, 74, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 30;
+        }
+        .hotspot-node:hover {
+            transform: scale(1.4);
+            background: #15803d;
+            box-shadow: 0 0 30px rgba(21, 128, 61, 1);
+        }
+        .hotspot-node::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 2px solid rgba(22, 163, 74, 0.4);
+            border-radius: 50%;
+            animation: pulseRadar 2.5s infinite linear;
+        }
+        @keyframes pulseRadar {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.8); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="pt-24">
+
+    <header class="fixed top-0 left-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <h1 class="text-2xl font-black tracking-tight text-gray-900">GreenGrow<span class="text-green-600">AI</span></h1>
+            </div>
+            <nav class="hidden lg:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                <a href="index.html" class="hover:text-green-600 transition">Home Portal</a>
+                <a href="rover.html" class="text-green-600 border-b-2 border-green-600 pb-1">Enterprise Showroom</a>
+                <a href="dashboard.html" class="hover:text-green-600 transition">Viksit Dashboard</a>
+                <a href="#technicalMatrix" class="hover:text-green-600 transition">Specifications</a>
+                <a href="#researchPaper" class="hover:text-green-600 transition">Research Repository</a>
+            </nav>
+            <span class="text-xs font-bold text-green-700 bg-green-50 px-3 py-1.5 rounded-lg border border-green-200 uppercase tracking-wider">Viksit Scale Ready</span>
+        </div>
+    </header>
+
+    <div class="fixed left-0 top-1/2 -translate-y-1/2 z-50 flex flex-col gap-3 pl-4 hidden md:flex">
+        <a href="index.html" class="group relative flex items-center justify-center w-12 h-12 bg-white text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-2xl shadow-md border border-gray-200">
+            <span class="text-xl">🏠</span>
+        </a>
+        <a href="rover.html" class="group relative flex items-center justify-center w-12 h-12 bg-green-600 text-white rounded-2xl shadow-lg border border-green-500">
+            <span class="text-xl">🚜</span>
+        </a>
+        <a href="dashboard.html" class="group relative flex items-center justify-center w-12 h-12 bg-white text-gray-700 hover:bg-green-50 hover:text-green-600 rounded-2xl shadow-md border border-gray-200">
+            <span class="text-xl">🇮🇳</span>
+        </a>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+        
+        <div class="text-center max-w-4xl mx-auto mb-16">
+            <span class="text-xs font-bold uppercase tracking-widest text-green-700 bg-green-100/60 px-3 py-1 rounded-full border border-green-200 inline-block mb-4">Flagship Hardware Release • Model V4</span>
+            <h2 class="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">Autonomous Yield Intelligence & Precision Field System</h2>
+            <p class="text-slate-600 mt-4 text-base md:text-lg">The comprehensive marketing, mechanical, and academic documentation portal for the GreenGrow AI fleet vehicle. Designed for institutional stakeholders and agricultural modernization panels.</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Operational Uplift</span>
+                <span class="text-3xl font-black text-slate-900 block mt-1">+34.2%</span>
+                <span class="text-xs text-green-600 font-medium block mt-1">Efficiency increase</span>
+            </div>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Chemical Waste Drop</span>
+                <span class="text-3xl font-black text-slate-900 block mt-1">-40%</span>
+                <span class="text-xs text-green-600 font-medium block mt-1">Via precision nozzles</span>
+            </div>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Power Autonomy</span>
+                <span class="text-3xl font-black text-slate-900 block mt-1">Infinite</span>
+                <span class="text-xs text-green-600 font-medium block mt-1">Solar PV daytime cycling</span>
+            </div>
+            <div class="bg-white border border-slate-200 p-6 rounded-2xl shadow-sm">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Compliance Standard</span>
+                <span class="text-3xl font-black text-slate-900 block mt-1">Viksit '47</span>
+                <span class="text-xs text-green-600 font-medium block mt-1">Digital Agri Verified</span>
+            </div>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8 items-start mb-20">
+            <div class="lg:col-span-7 showroom-viewport">
+                <div class="showroom-card relative bg-white p-2 rounded-3xl border border-slate-200 shadow-2xl overflow-hidden">
+                    <img src="final_rover.jpg" alt="GreenGrow AI Precision Model" class="w-full h-auto rounded-2xl object-cover relative z-0">
+
+                    <div class="hotspot-node" style="top: 25%; right: 18%;" onclick="loadShowroomTelemetry('manipulator')"></div>
+                    <div class="hotspot-node" style="top: 22%; left: 35%;" onclick="loadShowroomTelemetry('canopy')"></div>
+                    <div class="hotspot-node" style="top: 80%; left: 55%;" onclick="loadShowroomTelemetry('plow')"></div>
+                    <div class="hotspot-node" style="top: 72%; left: 16%;" onclick="loadShowroomTelemetry('drivetrain')"></div>
+                    <div class="hotspot-node" style="top: 48%; left: 45%;" onclick="loadShowroomTelemetry('avionics')"></div>
+                </div>
+                <p class="text-center text-xs font-medium text-slate-400 mt-3">⚡ Click on any pulsing green node pin to trigger telemetry diagnostics and data sheets.</p>
+            </div>
+
+            <div class="lg:col-span-5">
+                <div class="bg-white p-8 rounded-3xl border border-slate-200 shadow-xl relative overflow-hidden h-full min-h-[480px] flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-5 mb-5">
+                            <h3 id="displayTitle" class="text-2xl font-black text-slate-900 tracking-tight">Select Component Node</h3>
+                            <span id="displayBadge" class="text-[10px] bg-slate-100 text-slate-700 font-bold px-2.5 py-1 rounded-md border border-slate-200 tracking-wider uppercase">Standby Terminal</span>
+                        </div>
+
+                        <div id="showroomPrompt" class="space-y-4">
+                            <p class="text-sm text-slate-600 leading-relaxed">Click any node on the left structural schematic layout to parse real-time functional characteristics, component definitions, and field guidelines.</p>
+                            <div class="p-4 bg-green-50/50 rounded-2xl border border-green-100 text-xs text-green-950 font-medium leading-relaxed">
+                                Each module has been exhaustively prototyped to function flawlessly in challenging agricultural environments under dust, high temperatures, and continuous runtime profiles.
+                            </div>
+                        </div>
+
+                        <div id="showroomOutputBlock" class="hidden space-y-6">
+                            <div>
+                                <h4 class="text-xs uppercase font-extrabold text-slate-400 tracking-widest">Engineering Summary Features</h4>
+                                <p id="displayDesc" class="text-slate-700 text-sm mt-2 leading-relaxed font-medium"></p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs uppercase font-extrabold text-slate-400 tracking-widest mb-2">Field Operational Guidelines</h4>
+                                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                    <ul id="displayGuidelines" class="space-y-2 text-xs text-slate-600 font-medium list-disc pl-4 leading-relaxed"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 border-t border-slate-100 pt-5 mt-6">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Operational Voltage Rail</span>
+                            <span id="displayVoltage" class="text-sm font-black text-slate-900 font-mono block mt-1">--</span>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Hex Architecture Registry</span>
+                            <span id="displayHex" class="text-sm font-black text-green-700 font-mono block mt-1">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="technicalMatrix" class="bg-white border border-slate-200 rounded-3xl p-8 shadow-sm mb-20">
+            <div class="border-b border-slate-100 pb-5 mb-6">
+                <h3 class="text-2xl font-black text-slate-900 tracking-tight">Core System Physical Specs</h3>
+                <p class="text-sm text-slate-500">Validated physical and engineering dimensions of the structural platform chassis.</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+                <div class="space-y-2">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Dimensions & Structural Weight</p>
+                    <p class="text-slate-700 font-medium"><strong>Width:</strong> 1250 mm Frame Clearance</p>
+                    <p class="text-slate-700 font-medium"><strong>Length:</strong> 1800 mm Structural Core</p>
+                    <p class="text-slate-700 font-medium"><strong>Net Mass:</strong> 68 Kilograms (Unloaded Base Configuration)</p>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Locomotion & Payload</p>
+                    <p class="text-slate-700 font-medium"><strong>Velocity Profile:</strong> 0.5 - 1.8 meters per second</p>
+                    <p class="text-slate-700 font-medium"><strong>Max Payload Capacity:</strong> 45 Kilograms</p>
+                    <p class="text-slate-700 font-medium"><strong>Steering Radius:</strong> Zero-Turn Radius (ZTR) Skid Drive</p>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Telemetry & Sensors</p>
+                    <p class="text-slate-700 font-medium"><strong>Primary Guidance:</strong> Real-Time Kinematic (RTK) Dual GPS</p>
+                    <p class="text-slate-700 font-medium"><strong>Vision Array:</strong> Dual Active RGB-D Depth Mapping Sensors</p>
+                    <p class="text-slate-700 font-medium"><strong>Radio Control Uplink:</strong> 2.4GHz / 5.8GHz Resilient Long Range Radio</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-20 bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl">
+            <div class="grid md:grid-cols-12 gap-8 items-center">
+                <div class="md:col-span-5 space-y-4">
+                    <span class="text-[10px] font-extrabold uppercase tracking-widest text-green-400 bg-green-950 px-3 py-1 rounded-md border border-green-900">Media Demonstration Video</span>
+                    <h3 class="text-3xl font-black tracking-tight">Active Field Dynamics & Kinematics Video</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Watch the flagship model complete automated terrain scaling, real-time toolboard depth balancing passes, and obstacle avoidance maneuvers over dense field test rows.</p>
+                </div>
+                <div class="md:col-span-7">
+                    <div class="aspect-video w-full rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-center relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-60 filter blur-sm" style="background-image: url('final_rover.jpg');"></div>
+                        <div class="text-center z-10 px-4">
+                            <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg group-hover:scale-110 transition cursor-pointer">
+                                <span class="text-white text-xl pl-1">▶</span>
+                            </div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-slate-300 block font-sans">Stream Demonstration Media Deck</span>
+                            <span class="text-[10px] text-slate-500 font-mono mt-1 block">Target Local Asset file path: "assets/rover_demo.mp4"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="researchPaper" class="grid lg:grid-cols-12 gap-8 items-start">
+            
+            <div class="lg:col-span-7 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 pb-5">
+                    <span class="text-xs font-bold text-green-700 uppercase tracking-wider block mb-1">Peer-Reviewed Research Document</span>
+                    <h3 class="text-2xl font-black text-slate-900 tracking-tight">Design Strategies for Scalable Autonomous Agritech Platforms</h3>
+                    <p class="text-xs text-slate-400 font-mono mt-1">Document Identifier: GG-2026-AUTONOMY-BRB47</p>
+                </div>
+                
+                <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                    <p class="font-bold text-slate-900">1. Executive Overview & Scope</p>
+                    <p>Modern localized precision farming mandates highly adaptive, light-footprint modular equipment to circumvent the ground-packing structural degradation patterns introduced by heavy industrial commercial tractors. This study introduces an optimized design layout for an autonomous farm system integrating continuous charging solar canopies with specialized precision toolboards.</p>
+                    
+                    <p class="font-bold text-slate-900">2. Power Management & Solar Energy Collection</p>
+                    <p>By using a wide-aspect monocrystalline solar canopy acting both as an active battery charger and a sun protection element for internal computer sub-systems, our platform balances its operational power budget completely during peak daylight working windows, adding hours of standalone deployment life.</p>
+                    
+                    <p class="font-bold text-slate-900">3. Targeted Distribution Field Results</p>
+                    <p>Field test data demonstrates that combining neural vision mapping arrays with localized robotic spray elements cuts target chemical saturation volumes by up to 40% compared to standard broadcast approaches, while significantly lowering resource loss to environmental wind drift.</p>
+                </div>
+
+                <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl text-red-600">📄</span>
+                        <div>
+                            <p class="text-xs font-bold text-slate-900">Full_Research_Whitepaper_v2.1.pdf</p>
+                            <p class="text-[10px] text-slate-400 font-mono">Format Structure: PDF Archive • 4.82 MB • Version 2.1 Verified</p>
+                        </div>
+                    </div>
+                    <button class="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg font-bold text-xs transition">Download Spec Document</button>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 bg-white border border-slate-200 rounded-3xl p-8 shadow-sm">
+                <div class="border-b border-slate-100 pb-5 mb-4">
+                    <h3 class="text-xl font-black text-slate-900 tracking-tight">System Bill of Materials</h3>
+                    <p class="text-xs text-slate-400">Complete itemized hardware components tracking list registry.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-600 font-medium">
+                        <thead>
+                            <tr class="border-b border-slate-100 text-slate-400 font-bold uppercase tracking-wider">
+                                <th class="py-2">System Module</th>
+                                <th class="py-2">Hardware Unit Specification</th>
+                                <th class="py-2 text-right">Status Code</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">01. Manipulator</td>
+                                <td class="py-3.5">Brushless Servo Frame Arm Assembly</td>
+                                <td class="py-3.5 text-right text-emerald-600 font-mono font-bold">In-Stock</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">02. Power Grid</td>
+                                <td class="py-3.5">Monocrystalline Solar Canopy Shield</td>
+                                <td class="py-3.5 text-right text-emerald-600 font-mono font-bold">In-Stock</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">03. Tool Rig</td>
+                                <td class="py-3.5">Cultivation Plow Roller Matrix Component</td>
+                                <td class="py-3.5 text-right text-amber-600 font-mono font-bold">Assigned</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">04. Mobility Core</td>
+                                <td class="py-3.5">Planetary Gear Deep-Tread Wheels</td>
+                                <td class="py-3.5 text-right text-emerald-600 font-mono font-bold">In-Stock</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">05. Core Avionics</td>
+                                <td class="py-3.5">IP67 Weatherproof Computer Housing</td>
+                                <td class="py-3.5 text-right text-emerald-600 font-mono font-bold">Verified</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">06. Navigation Line</td>
+                                <td class="py-3.5">Dual-Antenna RTK GNSS Receiver GPS Array</td>
+                                <td class="py-3.5 text-right text-emerald-600 font-mono font-bold">Verified</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3.5 font-semibold text-slate-900">07. Battery Pack</td>
+                                <td class="py-3.5">Lithium Iron Phosphate (LiFePO4) 24V Unit</td>
+                                <td class="py-3.5 text-right text-amber-600 font-mono font-bold">Pending</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="py-12 bg-white border-t border-slate-200 text-center text-xs text-slate-400 mt-20">
+        <p class="font-semibold text-slate-500">GreenGrow AI Enterprise Launch Desk — Core Smart Farms Corporation</p>
+        <p class="mt-1 font-mono">Platform Documentation Repository Baseline Verification © 2026. All engineering rights reserved.</p>
+    </footer>
+
+    <script>
+        const structuralDatabase = {
+            manipulator: {
+                title: "Articulated Robotic Spray Arm",
+                badge: "Precision Manipulator",
+                desc: "High-accuracy multi-joint robotic crane arm fitted with brush-less servo positioning actuators. Employs endpoint directional nozzle heads to deliver micro-targeted fertilizer or localized hydration streams directly to crop rows without chemical dispersion drift.",
+                guidelines: [
+                    "Verify axis joint rotation clearpaths are entirely free from physical terrain obstructions before deploying.",
+                    "Calibrate delivery nozzle flow parameters to stay under 3.8 Bar pressures.",
+                    "Clean articulation hinge joints daily when operating within fine-grain field dust conditions."
+                ],
+                voltage: "12V Pure DC Sub-Rail",
+                hex: "0x7F_MANIPUL_OK"
+            },
+            canopy: {
+                title: "Regenerative Photovoltaic Canopy",
+                badge: "Power Generation Shield",
+                desc: "A wide-aspect monocrystalline solar generator array acting as both an active field charger and a weather defense shield for internal computer clusters, significantly lengthening remote field battery lifecycle spans.",
+                guidelines: [
+                    "Keep surface collection elements clean of dust layer buildup to maintain optimum solar conversion rates.",
+                    "Confirm the internal charge-limiting buck converters are dropping generator loads to 14.2V limits.",
+                    "Do not secure secondary payloads directly to the cantilevered canopy support trusses."
+                ],
+                voltage: "18.4V Peak Generated Array",
+                hex: "0x3B_PV_CHARGING"
+            },
+            plow: {
+                title: "Wide-Span Cultivation Plow Matrix",
+                badge: "Ground Treatment Rig",
+                desc: "An integrated horizontal soil treatment toolboard spanning the front chassis width. Built with a continuous multi-segment roller system that crushes unwanted weed development patterns while maintaining uniform soil depth lines.",
+                guidelines: [
+                    "Retract toolboard actuators entirely using the manual control overrides before transporting the unit on concrete roads.",
+                    "Regularly verify the balance profile across the pressure cylinders to guarantee consistent field penetration depths.",
+                    "Clear out damp soil packings from underlying blades after completing an active cultivation cycle."
+                ],
+                voltage: "24V High-Torque Power Line",
+                hex: "0x9E_PLOW_ACTIVE"
+            },
+            drivetrain: {
+                title: "Heavy-Duty Independent Drive Wheels",
+                badge: "Terrain Drivetrain Core",
+                desc: "Four independent high-flotation deep-tread agricultural wheels powered by enclosed planetary reduction gear assemblies. Delivers continuous traction matrix distribution on highly muddy or steep terrain.",
+                guidelines: [
+                    "Inspect internal planetary gearbox lubricant volume indices every 100 operating hours.",
+                    "Maintain lug mounting bolt torque ratings to industrial implementation standards.",
+                    "Calibrate independent wheel encoder offsets if systemic tracking paths exhibit alignment drifts."
+                ],
+                voltage: "24V Symmetric Motor Rail",
+                hex: "0x12_DRIVE_BALANCED"
+            },
+            avionics: {
+                title: "Sealed Avionic Processing Compartment",
+                badge: "Central Intelligence Hub",
+                desc: "Weatherproofed IP67 core housing sheltering the central processing units, solid-state power switches, telemetry communication modems, and the dual external high-gain tracking antennas visible along the roofline.",
+                guidelines: [
+                    "Ensure structural access seals are completely secured before beginning active sprinkler operations.",
+                    "Monitor diagnostic temperature metrics to verify continuous internal cooling airflow loops.",
+                    "Isolate the master power breaker switch prior to altering any physical wiring links or interface ports."
+                ],
+                voltage: "5V Logic Core / 12V Bus",
+                hex: "0x00_SYS_NOMINAL"
+            }
+        };
+
+        function loadShowroomTelemetry(key) {
+            const part = structuralDatabase[key];
+            if (!part) return;
+
+            document.getElementById("showroomPrompt").classList.add("hidden");
+            document.getElementById("showroomOutputBlock").classList.remove("hidden");
+
+            document.getElementById("displayTitle").innerText = part.title;
+            document.getElementById("displayBadge").innerText = part.badge;
+            document.getElementById("displayDesc").innerText = part.desc;
+            document.getElementById("displayVoltage").innerText = part.voltage;
+            document.getElementById("displayHex").innerText = part.hex;
+
+            const itemsList = document.getElementById("displayGuidelines");
+            itemsList.innerHTML = "";
+            part.guidelines.forEach(textLine => {
+                const li = document.createElement("li");
+                li.innerText = textLine;
+                itemsList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
